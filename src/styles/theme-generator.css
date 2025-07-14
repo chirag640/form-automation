@@ -1,0 +1,490 @@
+/* Theme Generator Auto-Generated Styles */
+
+/* Base theme variables - these will be overridden by the theme provider */
+:root {
+  --theme-primary: #60a5fa;
+  --theme-secondary: #94a3b8;
+  --theme-background: #111827;
+  --theme-surface: #1f2937;
+  --theme-text-primary: #f9fafb;
+  --theme-text-secondary: #d1d5db;
+  --theme-text-muted: #6b7280;
+  --theme-border: #374151;
+  --theme-error: #f87171;
+  --theme-success: #34d399;
+  --theme-warning: #fbbf24;
+  --theme-info: #60a5fa;
+  --theme-font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --theme-heading-font-size: 1.5rem;
+  --theme-heading-font-weight: 600;
+  --theme-heading-letter-spacing: -0.025em;
+  --theme-body-font-size: 1rem;
+  --theme-body-font-weight: 400;
+  --theme-body-line-height: 1.5;
+  --theme-input-font-size: 1rem;
+  --theme-input-font-weight: 400;
+  --theme-spacing-xs: 0.25rem;
+  --theme-spacing-sm: 0.5rem;
+  --theme-spacing-md: 1rem;
+  --theme-spacing-lg: 1.5rem;
+  --theme-spacing-xl: 2rem;
+  --theme-radius-sm: 0.25rem;
+  --theme-radius-md: 0.5rem;
+  --theme-radius-lg: 0.75rem;
+  --theme-radius-full: 9999px;
+  --theme-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --theme-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --theme-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --theme-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  --layout-max-width: 100%;
+  --layout-padding: 2rem;
+  --layout-spacing: 1.5rem;
+  --layout-field-spacing: 1rem;
+  --layout-group-spacing: 1.5rem;
+  --layout-section-spacing: 2rem;
+}
+
+/* Full screen and body styling */
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#__next {
+  height: 100%;
+  width: 100%;
+}
+
+/* Theme-aware component styles */
+.theme-generator-form {
+  font-family: var(--theme-font-family);
+  background-color: var(--theme-background);
+  color: var(--theme-text-primary);
+  max-width: var(--layout-max-width);
+  padding: var(--layout-padding);
+  margin: 0 auto;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.theme-generator-form h1,
+.theme-generator-form h2,
+.theme-generator-form h3,
+.theme-generator-form h4,
+.theme-generator-form h5,
+.theme-generator-form h6 {
+  font-size: var(--theme-heading-font-size);
+  font-weight: var(--theme-heading-font-weight);
+  letter-spacing: var(--theme-heading-letter-spacing);
+  color: var(--theme-text-primary);
+  margin-bottom: var(--layout-spacing);
+}
+
+.theme-generator-form p {
+  font-size: var(--theme-body-font-size);
+  font-weight: var(--theme-body-font-weight);
+  line-height: var(--theme-body-line-height);
+  color: var(--theme-text-secondary);
+  margin-bottom: var(--layout-spacing);
+}
+
+.theme-generator-form .form-field {
+  margin-bottom: var(--layout-field-spacing);
+}
+
+.theme-generator-form .form-group {
+  margin-bottom: var(--layout-group-spacing);
+}
+
+.theme-generator-form .form-section {
+  margin-bottom: var(--layout-section-spacing);
+  padding: var(--theme-spacing-lg);
+  background-color: var(--theme-surface);
+  border-radius: var(--theme-radius-md);
+  border: 1px solid var(--theme-border);
+}
+
+.theme-generator-form .form-section-title {
+  font-size: var(--theme-heading-font-size);
+  font-weight: var(--theme-heading-font-weight);
+  color: var(--theme-text-primary);
+  margin-bottom: var(--theme-spacing-md);
+}
+
+.theme-generator-form label {
+  display: block;
+  font-size: var(--theme-body-font-size);
+  font-weight: 500;
+  color: var(--theme-text-primary);
+  margin-bottom: var(--theme-spacing-xs);
+}
+
+.theme-generator-form input,
+.theme-generator-form textarea,
+.theme-generator-form select {
+  width: 100%;
+  padding: var(--theme-spacing-sm) var(--theme-spacing-md);
+  font-size: var(--theme-input-font-size);
+  font-weight: var(--theme-input-font-weight);
+  font-family: var(--theme-font-family);
+  border: 1px solid var(--theme-border);
+  border-radius: var(--theme-radius-sm);
+  background-color: var(--theme-background);
+  color: var(--theme-text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.theme-generator-form input:focus,
+.theme-generator-form textarea:focus,
+.theme-generator-form select:focus {
+  outline: none;
+  border-color: var(--theme-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.theme-generator-form input:invalid,
+.theme-generator-form textarea:invalid,
+.theme-generator-form select:invalid {
+  border-color: var(--theme-error);
+}
+
+.theme-generator-form button {
+  padding: var(--theme-spacing-sm) var(--theme-spacing-lg);
+  font-size: var(--theme-body-font-size);
+  font-weight: 500;
+  font-family: var(--theme-font-family);
+  border-radius: var(--theme-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.theme-generator-form .btn-primary {
+  background-color: var(--theme-primary);
+  color: white;
+}
+
+.theme-generator-form .btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: var(--theme-shadow-md);
+}
+
+.theme-generator-form .btn-secondary {
+  background-color: var(--theme-secondary);
+  color: white;
+}
+
+.theme-generator-form .btn-outline {
+  background-color: transparent;
+  color: var(--theme-primary);
+  border: 1px solid var(--theme-primary);
+}
+
+.theme-generator-form .btn-outline:hover {
+  background-color: var(--theme-primary);
+  color: white;
+}
+
+.theme-generator-form .error-message {
+  color: var(--theme-error);
+  font-size: 0.875rem;
+  margin-top: var(--theme-spacing-xs);
+}
+
+.theme-generator-form .success-message {
+  color: var(--theme-success);
+  font-size: 0.875rem;
+  margin-top: var(--theme-spacing-xs);
+}
+
+.theme-generator-form .warning-message {
+  color: var(--theme-warning);
+  font-size: 0.875rem;
+  margin-top: var(--theme-spacing-xs);
+}
+
+.theme-generator-form .info-message {
+  color: var(--theme-info);
+  font-size: 0.875rem;
+  margin-top: var(--theme-spacing-xs);
+}
+
+/* Layout-specific styles */
+.layout-single-column .theme-generator-form {
+  display: block;
+}
+
+.layout-two-column .theme-generator-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--layout-spacing);
+}
+
+.layout-two-column .form-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.layout-grid .theme-generator-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--layout-spacing);
+}
+
+.layout-card .theme-generator-form {
+  display: block;
+}
+
+.layout-card .form-section {
+  box-shadow: var(--theme-shadow-lg);
+  border: none;
+  margin-bottom: var(--layout-section-spacing);
+}
+
+.layout-stepper .theme-generator-form {
+  display: block;
+}
+
+.layout-stepper .form-section {
+  position: relative;
+  margin-left: var(--theme-spacing-xl);
+}
+
+.layout-stepper .form-section::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--theme-spacing-xl));
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--theme-border);
+}
+
+.layout-stepper .form-section::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--theme-spacing-xl) - 6px);
+  top: var(--theme-spacing-sm);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--theme-primary);
+  border: 2px solid var(--theme-background);
+}
+
+/* Label position styles */
+.label-top .theme-generator-form label {
+  margin-bottom: var(--theme-spacing-xs);
+}
+
+.label-left .theme-generator-form .form-field {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: var(--theme-spacing-md);
+  align-items: center;
+}
+
+.label-left .theme-generator-form label {
+  margin-bottom: 0;
+}
+
+.label-right .theme-generator-form .form-field {
+  display: grid;
+  grid-template-columns: 1fr 150px;
+  gap: var(--theme-spacing-md);
+  align-items: center;
+}
+
+.label-right .theme-generator-form label {
+  margin-bottom: 0;
+  order: 2;
+}
+
+.label-floating .theme-generator-form .form-field {
+  position: relative;
+  margin-top: var(--theme-spacing-md);
+}
+
+.label-floating .theme-generator-form label {
+  position: absolute;
+  left: var(--theme-spacing-md);
+  top: var(--theme-spacing-sm);
+  background-color: var(--theme-background);
+  padding: 0 var(--theme-spacing-xs);
+  font-size: 0.875rem;
+  color: var(--theme-text-muted);
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+.label-floating .theme-generator-form input:focus + label,
+.label-floating .theme-generator-form input:not(:placeholder-shown) + label,
+.label-floating .theme-generator-form textarea:focus + label,
+.label-floating .theme-generator-form textarea:not(:placeholder-shown) + label {
+  top: -0.5rem;
+  font-size: 0.75rem;
+  color: var(--theme-primary);
+}
+
+/* Form alignment styles */
+.form-align-left .theme-generator-form {
+  margin-left: 0;
+}
+
+.form-align-center .theme-generator-form {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-align-right .theme-generator-form {
+  margin-right: 0;
+}
+
+/* Theme type styles */
+.theme-dark {
+  background-color: var(--theme-background);
+}
+
+.theme-dark .theme-generator-form {
+  background-color: var(--theme-background);
+  color: var(--theme-text-primary);
+}
+
+.theme-dark .theme-generator-form input,
+.theme-dark .theme-generator-form textarea,
+.theme-dark .theme-generator-form select {
+  background-color: var(--theme-surface);
+  border-color: var(--theme-border);
+  color: var(--theme-text-primary);
+}
+
+.theme-dark .theme-generator-form input::placeholder,
+.theme-dark .theme-generator-form textarea::placeholder {
+  color: var(--theme-text-muted);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .layout-two-column .theme-generator-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .layout-grid .theme-generator-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .label-left .theme-generator-form .form-field,
+  .label-right .theme-generator-form .form-field {
+    grid-template-columns: 1fr;
+  }
+  
+  .label-left .theme-generator-form label,
+  .label-right .theme-generator-form label {
+    order: 0;
+    margin-bottom: var(--theme-spacing-xs);
+  }
+}
+
+/* Animation styles */
+.theme-generator-form {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.theme-generator-form .form-field {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Theme preview overlay */
+.theme-preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.theme-preview-panel {
+  background-color: var(--theme-surface);
+  border-radius: var(--theme-radius-lg);
+  padding: var(--theme-spacing-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--theme-shadow-xl);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Accessibility improvements */
+.theme-generator-form input:focus,
+.theme-generator-form textarea:focus,
+.theme-generator-form select:focus,
+.theme-generator-form button:focus {
+  outline: 2px solid var(--theme-primary);
+  outline-offset: 2px;
+}
+
+.theme-generator-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .theme-generator-form input,
+  .theme-generator-form textarea,
+  .theme-generator-form select {
+    border-width: 2px;
+  }
+  
+  .theme-generator-form button {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-generator-form,
+  .theme-generator-form .form-field,
+  .theme-preview-overlay,
+  .theme-preview-panel {
+    animation: none;
+  }
+  
+  .theme-generator-form input,
+  .theme-generator-form textarea,
+  .theme-generator-form select,
+  .theme-generator-form button {
+    transition: none;
+  }
+}

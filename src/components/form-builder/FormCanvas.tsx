@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { FormConfig, FieldConfig, SectionConfig } from '@/lib/types/form-config';
 import { SortableField } from './SortableField';
 import { SortableSection } from './SortableSection';
+import { useTheme } from '@/lib/contexts/ThemeProvider';
 import { Plus, Eye } from 'lucide-react';
 
 interface FormCanvasProps {
@@ -28,6 +29,10 @@ export const FormCanvas = ({
   isPreviewMode
 }: FormCanvasProps) => {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { getCurrentTheme, getCurrentLayout } = useTheme();
+  
+  const theme = getCurrentTheme();
+  const layout = getCurrentLayout();
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -136,24 +141,47 @@ export const FormCanvas = ({
   );
 
   return (
-    <div className="flex-1 bg-gray-900 overflow-y-auto">
+    <div 
+      className="flex-1 overflow-y-auto theme-generator-form w-full h-full"
+      style={{
+        backgroundColor: theme.colors.background,
+        color: theme.colors.text.primary,
+        fontFamily: theme.typography.fontFamily,
+        minHeight: '100vh'
+      }}
+    >
       <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="p-6">
+        <div className="p-6 w-full min-h-full">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 
+                className="text-2xl font-bold"
+                style={{
+                  color: theme.colors.text.primary,
+                  fontSize: theme.typography.headings.fontSize,
+                  fontWeight: theme.typography.headings.fontWeight
+                }}
+              >
                 {config.title || 'Untitled Form'}
               </h1>
               {config.description && (
-                <p className="text-gray-400 mt-1">{config.description}</p>
+                <p 
+                  className="mt-1"
+                  style={{
+                    color: theme.colors.text.secondary,
+                    fontSize: theme.typography.body.fontSize
+                  }}
+                >
+                  {config.description}
+                </p>
               )}
             </div>
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
                 onClick={onPreviewToggle}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
               >
                 <Eye className="w-4 h-4" />
                 <span>{isPreviewMode ? 'Edit' : 'Preview'}</span>
@@ -162,33 +190,66 @@ export const FormCanvas = ({
           </div>
 
           {/* Form Builder */}
-          <div className="space-y-6">
+          <div 
+            className="space-y-6 w-full"
+            style={{
+              maxWidth: layout.formLayout.maxWidth,
+              margin: layout.formLayout.alignment === 'center' ? '0 auto' : 
+                      layout.formLayout.alignment === 'right' ? '0 0 0 auto' : '0',
+              padding: layout.formLayout.padding
+            }}
+          >
             {config.sections.length === 0 ? (
-              <Card>
-                <CardContent className="py-12">
-                  <div className="text-center">
-                    <p className="text-gray-400 mb-4">
-                      No fields added yet. Start by adding fields from the library.
-                    </p>
-                    <Button onClick={onAddSection} className="flex items-center space-x-2">
-                      <Plus className="w-4 h-4" />
-                      <span>Add Section</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div 
+                className="py-12 rounded-lg border"
+                style={{ 
+                  backgroundColor: theme.colors.surface, 
+                  borderColor: theme.colors.border 
+                }}
+              >
+                <div className="text-center">
+                  <p 
+                    className="mb-4"
+                    style={{ color: theme.colors.text.secondary }}
+                  >
+                    No fields added yet. Start by adding fields from the library.
+                  </p>
+                  <Button 
+                    onClick={onAddSection} 
+                    className="flex items-center space-x-2"
+                    style={{
+                      backgroundColor: theme.colors.primary,
+                      color: 'white'
+                    }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Section</span>
+                  </Button>
+                </div>
+              </div>
             ) : (
               <SortableContext 
                 items={config.sections.map(s => 'id' in s ? s.id : (s as FieldConfig).key)}
                 strategy={verticalListSortingStrategy}
               >
-                {config.sections.map((section, index) => {
-                  if ('fields' in section) {
-                    return renderSection(section as SectionConfig, index);
-                  } else {
-                    return renderField(section as FieldConfig, index);
-                  }
-                })}
+                <div 
+                  className={`
+                    ${layout.type === 'two-column' ? 'grid grid-cols-1 md:grid-cols-2' : ''}
+                    ${layout.type === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : ''}
+                    ${layout.type === 'card' ? 'space-y-8' : 'space-y-6'}
+                  `}
+                  style={{
+                    gap: layout.fieldLayout.groupSpacing
+                  }}
+                >
+                  {config.sections.map((section, index) => {
+                    if ('fields' in section) {
+                      return renderSection(section as SectionConfig, index);
+                    } else {
+                      return renderField(section as FieldConfig, index);
+                    }
+                  })}
+                </div>
               </SortableContext>
             )}
 
@@ -197,7 +258,7 @@ export const FormCanvas = ({
               <Button
                 variant="outline"
                 onClick={onAddSection}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
               >
                 <Plus className="w-4 h-4" />
                 <span>Add Section</span>
@@ -208,8 +269,15 @@ export const FormCanvas = ({
 
         <DragOverlay>
           {activeId ? (
-            <div className="p-4 bg-blue-900 border border-blue-700 rounded-lg">
-              <p className="text-blue-200">Dragging item...</p>
+            <div 
+              className="p-4 border rounded-lg"
+              style={{
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.primary,
+                color: theme.colors.text.primary
+              }}
+            >
+              <p>Dragging item...</p>
             </div>
           ) : null}
         </DragOverlay>

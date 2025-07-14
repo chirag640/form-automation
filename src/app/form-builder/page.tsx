@@ -2,15 +2,17 @@
 
 import { useState } from 'react';
 import { useFormBuilder } from '@/lib/hooks/useFormBuilder';
+import { useThemeCSS } from '@/lib/hooks/useThemeCSS';
 import { FieldLibrary } from '@/components/form-builder/FieldLibrary';
 import { FormCanvas } from '@/components/form-builder/FormCanvas';
 import { PropertyPanel } from '@/components/form-builder/PropertyPanel';
 import { CodeGeneratorModal } from '@/components/form-builder/CodeGeneratorModal';
 import { FormPreview } from '@/components/preview/FormPreview';
+import { ThemeGenerator } from '@/components/theme-generator/ThemeGenerator';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FieldType } from '@/lib/types/form-config';
-import { Code, Save, Settings } from 'lucide-react';
+import { Code, Save, Settings, Palette } from 'lucide-react';
 
 export default function FormBuilderPage() {
   const {
@@ -24,9 +26,13 @@ export default function FormBuilderPage() {
     getSelectedField
   } = useFormBuilder();
 
+  // Apply theme CSS variables
+  useThemeCSS();
+
   const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isThemeGeneratorOpen, setIsThemeGeneratorOpen] = useState(false);
 
   const handleAddField = (fieldType: FieldType) => {
     addField(fieldType);
@@ -49,20 +55,21 @@ export default function FormBuilderPage() {
 
   if (isPreviewMode) {
     return (
-      <div className="h-screen flex flex-col">
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="h-screen w-full flex flex-col bg-gray-900 overflow-hidden">
+        <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex-shrink-0">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold">Form Preview</h1>
+            <h1 className="text-xl font-semibold text-white">Form Preview</h1>
             <div className="flex items-center space-x-3">
               <Button
                 variant="outline"
                 onClick={() => setIsPreviewMode(false)}
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
               >
                 Back to Builder
               </Button>
               <Button
                 onClick={() => setIsCodeModalOpen(true)}
-                className="flex items-center space-x-2"
+                className="bg-blue-600 hover:bg-blue-700 text-white flex items-center space-x-2"
               >
                 <Code className="w-4 h-4" />
                 <span>Generate Code</span>
@@ -70,7 +77,7 @@ export default function FormBuilderPage() {
             </div>
           </div>
         </div>
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-gray-900 w-full h-full">
           <FormPreview config={formConfig} />
         </div>
       </div>
@@ -78,9 +85,9 @@ export default function FormBuilderPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-gray-900">
+    <div className="h-screen w-full flex flex-col bg-gray-900 overflow-hidden">
       {/* Header */}
-      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4">
+      <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <h1 className="text-xl font-semibold text-white">🚀 Dynamic Form Builder</h1>
@@ -96,6 +103,14 @@ export default function FormBuilderPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsThemeGeneratorOpen(true)}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white flex items-center space-x-2"
+            >
+              <Palette className="w-4 h-4" />
+              <span>Theme & Layout</span>
+            </Button>
             <Button
               variant="outline"
               onClick={() => setIsPreviewMode(true)}
@@ -153,7 +168,7 @@ export default function FormBuilderPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden w-full h-full">
         {/* Field Library */}
         <FieldLibrary onAddField={handleAddField} />
 
@@ -180,6 +195,12 @@ export default function FormBuilderPage() {
         isOpen={isCodeModalOpen}
         onClose={() => setIsCodeModalOpen(false)}
         formConfig={formConfig}
+      />
+
+      {/* Theme Generator Modal */}
+      <ThemeGenerator
+        isOpen={isThemeGeneratorOpen}
+        onClose={() => setIsThemeGeneratorOpen(false)}
       />
     </div>
   );
