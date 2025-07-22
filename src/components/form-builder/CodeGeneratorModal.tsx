@@ -74,10 +74,10 @@ export const CodeGeneratorModal = ({ isOpen, onClose, formConfig }: CodeGenerato
     <Modal isOpen={isOpen} onClose={onClose} title="Generate Form Code" size="fullscreen">
       <div className="flex h-full">
         {/* Sidebar */}
-        <div className="w-80 bg-gray-50 border-r border-gray-200 p-6">
+        <div className="w-80 bg-gray-800 border-r border-gray-700 p-6">
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Framework</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Framework</h3>
               <div className="space-y-2">
                 {frameworks.map(framework => (
                   <button
@@ -85,19 +85,19 @@ export const CodeGeneratorModal = ({ isOpen, onClose, formConfig }: CodeGenerato
                     onClick={() => setSelectedFramework(framework.id as Framework)}
                     className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
                       selectedFramework === framework.id
-                        ? 'bg-blue-50 border-blue-200 text-blue-900'
-                        : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                        ? 'bg-blue-600 border-blue-600 text-white'
+                        : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
                     }`}
                   >
                     <div className="font-medium">{framework.name}</div>
-                    <div className="text-sm text-gray-500">.{framework.ext}</div>
+                    <div className="text-sm text-gray-400">.{framework.ext}</div>
                   </button>
                 ))}
               </div>
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Actions</h3>
               <div className="space-y-2">
                 <Button
                   onClick={copyToClipboard}
@@ -129,13 +129,13 @@ export const CodeGeneratorModal = ({ isOpen, onClose, formConfig }: CodeGenerato
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Form Info</h3>
-              <div className="space-y-2 text-sm">
+              <h3 className="text-lg font-semibold text-white mb-4">Form Info</h3>
+              <div className="space-y-2 text-sm text-gray-300">
                 <div>
-                  <span className="font-medium">Title:</span> {formConfig.title || 'Untitled'}
+                  <span className="font-medium text-white">Title:</span> {formConfig.title || 'Untitled'}
                 </div>
                 <div>
-                  <span className="font-medium">Fields:</span> {
+                  <span className="font-medium text-white">Fields:</span> {
                     formConfig.sections.reduce((total, section) => {
                       if ('fields' in section) {
                         return total + section.fields.length;
@@ -145,7 +145,7 @@ export const CodeGeneratorModal = ({ isOpen, onClose, formConfig }: CodeGenerato
                   }
                 </div>
                 <div>
-                  <span className="font-medium">Sections:</span> {
+                  <span className="font-medium text-white">Sections:</span> {
                     formConfig.sections.filter(section => 'fields' in section).length
                   }
                 </div>

@@ -1,26 +1,87 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Force dark mode - override system preferences */
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  
+  /* Dark theme colors for consistent theming */
+  --primary: #60a5fa;
+  --secondary: #94a3b8;
+  --muted: #1f2937;
+  --accent: #374151;
+  --destructive: #f87171;
+  --border: #374151;
+  --input: #1f2937;
+  --ring: #60a5fa;
+  --radius: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Ensure dark mode regardless of system preference */
+html {
+  color-scheme: dark;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+/* Global dark mode styles */
+* {
+  border-color: var(--border);
+}
+
+/* Ensure all text inputs and form elements follow dark theme */
+input, textarea, select {
+  background-color: var(--input);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+/* VS Code style scrollbars */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #424242 #2d2d30;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2d2d30;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 10px;
+  border: 2px solid #2d2d30;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4f4f4f;
+}
+
+.custom-scrollbar::-webkit-scrollbar-corner {
+  background: #2d2d30;
+}
+
+/* Hide scrollbar for webkit browsers while keeping functionality */
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }

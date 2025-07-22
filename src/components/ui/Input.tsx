@@ -12,25 +12,25 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="space-y-1">
         {label && (
-          <label className="block text-sm font-medium text-gray-300">
+          <label className="block text-sm font-medium text-[#cccccc]">
             {label}
-            {props.required && <span className="text-red-400 ml-1">*</span>}
+            {props.required && <span className="text-[#f14c4c] ml-1">*</span>}
           </label>
         )}
         <input
           className={cn(
-            'w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
-            error && 'border-red-500 focus:ring-red-500',
+            'w-full px-3 py-2 bg-[#3c3c3c] border border-[#3e3e42] rounded text-[#cccccc] placeholder-[#858585] focus:outline-none focus:ring-1 focus:ring-[#007acc] focus:border-[#007acc] transition-colors',
+            error && 'border-[#f14c4c] focus:ring-[#f14c4c] focus:border-[#f14c4c]',
             className
           )}
           ref={ref}
           {...props}
         />
         {error && (
-          <p className="text-sm text-red-400">{error}</p>
+          <p className="text-sm text-[#f14c4c]">{error}</p>
         )}
         {helperText && !error && (
-          <p className="text-sm text-gray-400">{helperText}</p>
+          <p className="text-sm text-[#858585]">{helperText}</p>
         )}
       </div>
     );

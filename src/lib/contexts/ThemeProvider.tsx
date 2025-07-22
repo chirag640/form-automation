@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { ThemeConfig, LayoutConfig, ThemePreset, GeneratorSettings, ThemeGeneratorState } from '@/lib/types/theme-config';
-import { getDefaultTheme, getDefaultLayout, getDefaultPresets, getDefaultSettings } from '@/lib/utils/theme-defaults';
+import { getDefaultTheme, getDefaultLayout, getDefaultPresets, getDefaultSettings, generateRandomTheme, generateRandomLayout } from '@/lib/utils/theme-defaults';
 
 type ThemeAction = 
   | { type: 'SET_THEME'; payload: ThemeConfig }
@@ -115,12 +115,20 @@ const themeReducer = (state: ThemeGeneratorState, action: ThemeAction): ThemeGen
       };
     
     case 'RANDOMIZE_THEME':
-      // This will be implemented with actual randomization logic
-      return state;
+      const randomTheme = generateRandomTheme(state.settings.randomizationLevel);
+      return {
+        ...state,
+        currentTheme: randomTheme,
+        previewTheme: undefined
+      };
     
     case 'RANDOMIZE_LAYOUT':
-      // This will be implemented with actual randomization logic
-      return state;
+      const randomLayout = generateRandomLayout(state.settings.randomizationLevel);
+      return {
+        ...state,
+        currentLayout: randomLayout,
+        previewLayout: undefined
+      };
     
     case 'RESET_TO_DEFAULT':
       return {
@@ -265,20 +273,22 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const generateRandomTheme = () => {
     dispatch({ type: 'SET_GENERATING', payload: true });
-    // Implement actual randomization logic
+    // Add a small delay to show loading state
     setTimeout(() => {
+      dispatch({ type: 'SAVE_TO_HISTORY' });
       dispatch({ type: 'RANDOMIZE_THEME' });
       dispatch({ type: 'SET_GENERATING', payload: false });
-    }, 1000);
+    }, 500);
   };
 
   const generateRandomLayout = () => {
     dispatch({ type: 'SET_GENERATING', payload: true });
-    // Implement actual randomization logic
+    // Add a small delay to show loading state
     setTimeout(() => {
+      dispatch({ type: 'SAVE_TO_HISTORY' });
       dispatch({ type: 'RANDOMIZE_LAYOUT' });
       dispatch({ type: 'SET_GENERATING', payload: false });
-    }, 1000);
+    }, 500);
   };
 
   const updateSettings = (settings: Partial<GeneratorSettings>) => {

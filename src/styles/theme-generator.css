@@ -1,10 +1,10 @@
 /* Theme Generator Auto-Generated Styles */
 
-/* Base theme variables - these will be overridden by the theme provider */
+/* Base theme variables - enforced dark mode */
 :root {
   --theme-primary: #60a5fa;
   --theme-secondary: #94a3b8;
-  --theme-background: #111827;
+  --theme-background: #0a0a0a;
   --theme-surface: #1f2937;
   --theme-text-primary: #f9fafb;
   --theme-text-secondary: #d1d5db;
@@ -51,11 +51,47 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  background-color: var(--theme-background);
+  color: var(--theme-text-primary);
 }
 
 #__next {
   height: 100%;
   width: 100%;
+  background-color: var(--theme-background);
+}
+
+/* Global dark mode overrides */
+* {
+  color-scheme: dark;
+}
+
+/* Force all modals, cards, and dialogs to be dark */
+[role="dialog"],
+[role="modal"],
+.modal,
+.card,
+.popover {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Ensure all inputs and form elements are dark */
+input:not([type="radio"]):not([type="checkbox"]),
+textarea,
+select,
+button {
+  background-color: var(--theme-surface) !important;
+  color: var(--theme-text-primary) !important;
+  border-color: var(--theme-border) !important;
+}
+
+/* Ensure checkboxes and radio buttons follow dark theme */
+input[type="radio"],
+input[type="checkbox"] {
+  background-color: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
 }
 
 /* Theme-aware component styles */

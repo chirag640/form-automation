@@ -9,10 +9,12 @@ import { PropertyPanel } from '@/components/form-builder/PropertyPanel';
 import { CodeGeneratorModal } from '@/components/form-builder/CodeGeneratorModal';
 import { FormPreview } from '@/components/preview/FormPreview';
 import { ThemeGenerator } from '@/components/theme-generator/ThemeGenerator';
+import { FormDebugger } from '@/lib/utils/form-debugger';
+import { problematicForms, loadTestForm, generateComprehensiveTestForm } from '@/lib/utils/test-forms';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { FieldType } from '@/lib/types/form-config';
-import { Code, Save, Settings, Palette } from 'lucide-react';
+import { Code, Save, Settings, Palette, Bug } from 'lucide-react';
 
 export default function FormBuilderPage() {
   const {
@@ -33,6 +35,7 @@ export default function FormBuilderPage() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isThemeGeneratorOpen, setIsThemeGeneratorOpen] = useState(false);
+  const [showTestForms, setShowTestForms] = useState(false);
 
   const handleAddField = (fieldType: FieldType) => {
     addField(fieldType);
@@ -49,6 +52,40 @@ export default function FormBuilderPage() {
       ...formConfig,
       [key]: value
     });
+  };
+
+  const handleDebugForm = () => {
+    console.log('🔍 Debugging Form Configuration...');
+    FormDebugger.debugFormConfig(formConfig);
+    
+    // Also log the raw JSON for inspection
+    console.log('📄 Raw Form JSON:', JSON.stringify(formConfig, null, 2));
+  };
+
+  const handleLoadTestForm = (formName: keyof typeof problematicForms) => {
+    const testForm = loadTestForm(formName);
+    setFormConfig(testForm);
+    setSelectedFieldId(null);
+    setShowTestForms(false);
+    
+    // Automatically debug the loaded form
+    setTimeout(() => {
+      console.log(`🧪 Loaded test form: ${formName}`);
+      FormDebugger.debugFormConfig(testForm);
+    }, 100);
+  };
+
+  const handleLoadComprehensiveTest = () => {
+    const testForm = generateComprehensiveTestForm();
+    setFormConfig(testForm);
+    setSelectedFieldId(null);
+    setShowTestForms(false);
+    
+    // Automatically debug the loaded form
+    setTimeout(() => {
+      console.log('🧪 Loaded comprehensive test form');
+      FormDebugger.debugFormConfig(testForm);
+    }, 100);
   };
 
   const selectedField = getSelectedField();
@@ -103,6 +140,22 @@ export default function FormBuilderPage() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowTestForms(!showTestForms)}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white flex items-center space-x-2"
+            >
+              <Bug className="w-4 h-4" />
+              <span>Test Forms</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDebugForm}
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white flex items-center space-x-2"
+            >
+              <Bug className="w-4 h-4" />
+              <span>Debug Form</span>
+            </Button>
             <Button
               variant="outline"
               onClick={() => setIsThemeGeneratorOpen(true)}
@@ -162,6 +215,58 @@ export default function FormBuilderPage() {
                   className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Test Forms Menu */}
+        {showTestForms && (
+          <div className="mt-4 p-4 bg-gray-750 rounded-lg border border-gray-600">
+            <h3 className="text-lg font-semibold text-white mb-4">🧪 Load Test Forms for Debugging</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Problematic Forms</h4>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleLoadTestForm('missingDropdownOptions')}
+                    className="w-full text-left border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Missing Dropdown Options
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleLoadTestForm('incorrectFieldTypes')}
+                    className="w-full text-left border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Incorrect Field Types
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleLoadTestForm('edgeCases')}
+                    className="w-full text-left border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Edge Cases
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-gray-300 mb-3">Comprehensive Tests</h4>
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleLoadComprehensiveTest}
+                    className="w-full text-left border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    Comprehensive Test Form
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-600">
+              <p className="text-sm text-gray-400">
+                💡 Load a test form, then click "Debug Form" to see detailed analysis in the console.
+              </p>
             </div>
           </div>
         )}

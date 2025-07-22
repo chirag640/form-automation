@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { ThemePreset, GeneratorSettings } from '@/lib/types/theme-config';
-import { generateRandomTheme, generateRandomLayout } from '@/lib/utils/theme-defaults';
+import { generateRandomTheme as utilGenerateRandomTheme, generateRandomLayout as utilGenerateRandomLayout } from '@/lib/utils/theme-defaults';
 import { 
   Palette, 
   Layout, 
@@ -20,7 +20,8 @@ import {
   Download,
   Upload,
   History,
-  Sparkles
+  Sparkles,
+  Clock
 } from 'lucide-react';
 
 interface ThemeGeneratorProps {
@@ -40,47 +41,33 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
     applyPreset,
     saveCustomTheme,
     saveCustomLayout,
+    generateRandomTheme,
+    generateRandomLayout,
     updateSettings,
     resetToDefault,
     getCurrentTheme,
     getCurrentLayout
   } = useTheme();
 
-  const [activeTab, setActiveTab] = useState<'themes' | 'layouts' | 'presets' | 'settings'>('themes');
+  const [activeTab, setActiveTab] = useState<'themes' | 'layouts' | 'presets' | 'history' | 'settings'>('themes');
   const [customThemeName, setCustomThemeName] = useState('');
   const [customLayoutName, setCustomLayoutName] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerateRandomTheme = async () => {
-    setIsGenerating(true);
-    try {
-      const randomTheme = generateRandomTheme(state.settings.randomizationLevel);
-      if (state.settings.previewMode) {
-        previewTheme(randomTheme);
-      } else {
-        setTheme(randomTheme);
-      }
-    } catch (error) {
-      console.error('Error generating random theme:', error);
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerateRandomTheme = () => {
+    generateRandomTheme();
   };
 
-  const handleGenerateRandomLayout = async () => {
-    setIsGenerating(true);
-    try {
-      const randomLayout = generateRandomLayout(state.settings.randomizationLevel);
-      if (state.settings.previewMode) {
-        previewLayout(randomLayout);
-      } else {
-        setLayout(randomLayout);
-      }
-    } catch (error) {
-      console.error('Error generating random layout:', error);
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerateRandomLayout = () => {
+    generateRandomLayout();
+  };
+
+  const handleGenerateRandomBoth = () => {
+    generateRandomTheme();
+    // Small delay between theme and layout generation
+    setTimeout(() => {
+      generateRandomLayout();
+    }, 200);
   };
 
   const handleSaveCustomTheme = () => {
@@ -116,18 +103,31 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
 
   const renderThemesTab = () => (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Button
           onClick={handleGenerateRandomTheme}
-          disabled={isGenerating}
+          disabled={isGenerating || state.isGenerating}
           className="flex items-center gap-2"
         >
-          {isGenerating ? (
+          {isGenerating || state.isGenerating ? (
             <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
             <Shuffle className="w-4 h-4" />
           )}
           Generate Random Theme
+        </Button>
+        
+        <Button
+          onClick={handleGenerateRandomBoth}
+          disabled={isGenerating || state.isGenerating}
+          className="flex items-center gap-2 bg-[#9c27b0] hover:bg-[#7b1fa2] text-white"
+        >
+          {isGenerating || state.isGenerating ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+          Generate Both
         </Button>
         
         <Button
@@ -140,40 +140,67 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
         </Button>
       </div>
 
+      {/* Randomization Level Control */}
+      <Card className="p-4">
+        <h3 className="font-semibold mb-3 text-[#cccccc]">Randomization Level</h3>
+        <div className="space-y-2">
+          <div className="flex items-center gap-4">
+            {(['conservative', 'moderate', 'creative'] as const).map((level) => (
+              <label key={level} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="randomizationLevel"
+                  value={level}
+                  checked={state.settings.randomizationLevel === level}
+                  onChange={(e) => handleSettingsUpdate('randomizationLevel', e.target.value)}
+                  className="w-4 h-4 accent-[#007acc]"
+                />
+                <span className="text-sm capitalize text-[#cccccc]">{level}</span>
+              </label>
+            ))}
+          </div>
+          <p className="text-xs text-[#858585]">
+            {state.settings.randomizationLevel === 'conservative' && 'Safe, professional color schemes and layouts'}
+            {state.settings.randomizationLevel === 'moderate' && 'Balanced mix of traditional and modern styles'}
+            {state.settings.randomizationLevel === 'creative' && 'Bold, experimental designs and color combinations'}
+          </p>
+        </div>
+      </Card>
+
       {/* Theme Preview */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Current Theme: {getCurrentTheme().name}</h3>
+        <h3 className="font-semibold mb-3 text-[#cccccc]">Current Theme: {getCurrentTheme().name}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div 
-                className="w-4 h-4 rounded-full border"
+                className="w-4 h-4 rounded-full border border-[#3e3e42]"
                 style={{ backgroundColor: getCurrentTheme().colors.primary }}
               />
-              <span className="text-sm">Primary: {getCurrentTheme().colors.primary}</span>
+              <span className="text-sm text-[#cccccc]">Primary: {getCurrentTheme().colors.primary}</span>
             </div>
             <div className="flex items-center gap-2">
               <div 
-                className="w-4 h-4 rounded-full border"
+                className="w-4 h-4 rounded-full border border-[#3e3e42]"
                 style={{ backgroundColor: getCurrentTheme().colors.secondary }}
               />
-              <span className="text-sm">Secondary: {getCurrentTheme().colors.secondary}</span>
+              <span className="text-sm text-[#cccccc]">Secondary: {getCurrentTheme().colors.secondary}</span>
             </div>
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <div 
-                className="w-4 h-4 rounded-full border"
+                className="w-4 h-4 rounded-full border border-[#3e3e42]"
                 style={{ backgroundColor: getCurrentTheme().colors.background }}
               />
-              <span className="text-sm">Background: {getCurrentTheme().colors.background}</span>
+              <span className="text-sm text-[#cccccc]">Background: {getCurrentTheme().colors.background}</span>
             </div>
             <div className="flex items-center gap-2">
               <div 
-                className="w-4 h-4 rounded-full border"
+                className="w-4 h-4 rounded-full border border-[#3e3e42]"
                 style={{ backgroundColor: getCurrentTheme().colors.surface }}
               />
-              <span className="text-sm">Surface: {getCurrentTheme().colors.surface}</span>
+              <span className="text-sm text-[#cccccc]">Surface: {getCurrentTheme().colors.surface}</span>
             </div>
           </div>
         </div>
@@ -181,7 +208,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
 
       {/* Save Custom Theme */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Save Current Theme</h3>
+        <h3 className="font-semibold mb-3 text-[#cccccc]">Save Current Theme</h3>
         <div className="flex gap-2">
           <Input
             value={customThemeName}
@@ -203,11 +230,11 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
       {/* Custom Themes */}
       {state.customThemes.length > 0 && (
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Custom Themes</h3>
-          <div className="grid gap-2">
+          <h3 className="font-semibold mb-3 text-[#cccccc]">Custom Themes</h3>
+          <div className="grid gap-2 max-h-[30vh] overflow-y-auto custom-scrollbar pr-2">
             {state.customThemes.map((theme) => (
-              <div key={theme.id} className="flex items-center justify-between p-2 border rounded">
-                <span>{theme.name}</span>
+              <div key={theme.id} className="flex items-center justify-between p-3 border border-[#3e3e42] rounded bg-[#2d2d30]">
+                <span className="text-[#cccccc]">{theme.name}</span>
                 <Button
                   variant="outline"
                   size="sm"
@@ -225,41 +252,54 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
 
   const renderLayoutsTab = () => (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Button
           onClick={handleGenerateRandomLayout}
-          disabled={isGenerating}
+          disabled={isGenerating || state.isGenerating}
           className="flex items-center gap-2"
         >
-          {isGenerating ? (
+          {isGenerating || state.isGenerating ? (
             <RefreshCw className="w-4 h-4 animate-spin" />
           ) : (
             <Layout className="w-4 h-4" />
           )}
           Generate Random Layout
         </Button>
+        
+        <Button
+          onClick={handleGenerateRandomBoth}
+          disabled={isGenerating || state.isGenerating}
+          className="flex items-center gap-2 bg-[#9c27b0] hover:bg-[#7b1fa2] text-white"
+        >
+          {isGenerating || state.isGenerating ? (
+            <RefreshCw className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+          Generate Both
+        </Button>
       </div>
 
       {/* Layout Preview */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Current Layout: {getCurrentLayout().name}</h3>
+        <h3 className="font-semibold mb-3 text-[#cccccc]">Current Layout: {getCurrentLayout().name}</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p><strong>Type:</strong> {getCurrentLayout().type}</p>
-            <p><strong>Max Width:</strong> {getCurrentLayout().formLayout.maxWidth}</p>
-            <p><strong>Alignment:</strong> {getCurrentLayout().formLayout.alignment}</p>
+          <div className="space-y-1">
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Type:</strong> {getCurrentLayout().type}</p>
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Max Width:</strong> {getCurrentLayout().formLayout.maxWidth}</p>
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Alignment:</strong> {getCurrentLayout().formLayout.alignment}</p>
           </div>
-          <div>
-            <p><strong>Label Position:</strong> {getCurrentLayout().fieldLayout.labelPosition}</p>
-            <p><strong>Field Spacing:</strong> {getCurrentLayout().fieldLayout.fieldSpacing}</p>
-            <p><strong>Section Spacing:</strong> {getCurrentLayout().fieldLayout.sectionSpacing}</p>
+          <div className="space-y-1">
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Label Position:</strong> {getCurrentLayout().fieldLayout.labelPosition}</p>
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Field Spacing:</strong> {getCurrentLayout().fieldLayout.fieldSpacing}</p>
+            <p className="text-[#cccccc]"><strong className="text-[#4fc3f7]">Section Spacing:</strong> {getCurrentLayout().fieldLayout.sectionSpacing}</p>
           </div>
         </div>
       </Card>
 
       {/* Save Custom Layout */}
       <Card className="p-4">
-        <h3 className="font-semibold mb-3">Save Current Layout</h3>
+        <h3 className="font-semibold mb-3 text-[#cccccc]">Save Current Layout</h3>
         <div className="flex gap-2">
           <Input
             value={customLayoutName}
@@ -281,11 +321,11 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
       {/* Custom Layouts */}
       {state.customLayouts.length > 0 && (
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">Custom Layouts</h3>
-          <div className="grid gap-2">
+          <h3 className="font-semibold mb-3 text-[#cccccc]">Custom Layouts</h3>
+          <div className="space-y-2 max-h-[30vh] overflow-y-auto custom-scrollbar pr-2">
             {state.customLayouts.map((layout) => (
-              <div key={layout.id} className="flex items-center justify-between p-2 border rounded">
-                <span>{layout.name}</span>
+              <div key={layout.id} className="flex items-center justify-between p-3 border border-[#3e3e42] rounded bg-[#2d2d30]">
+                <span className="text-[#cccccc]">{layout.name}</span>
                 <Button
                   variant="outline"
                   size="sm"
@@ -303,22 +343,22 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
 
   const renderPresetsTab = () => (
     <div className="space-y-6">
-      <div className="grid gap-4">
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2">
         {state.presets.map((preset) => (
           <Card key={preset.id} className="p-4">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold">{preset.name}</h3>
-                <p className="text-sm text-gray-600">{preset.description}</p>
-                <div className="flex gap-1 mt-2">
+              <div className="flex-1">
+                <h3 className="font-semibold text-[#cccccc] mb-1">{preset.name}</h3>
+                <p className="text-sm text-[#858585] mb-2">{preset.description}</p>
+                <div className="flex gap-1 flex-wrap">
                   {preset.tags.map((tag) => (
-                    <span key={tag} className="px-2 py-1 bg-gray-100 text-xs rounded">
+                    <span key={tag} className="px-2 py-1 bg-[#37373d] text-[#cccccc] text-xs rounded border border-[#3e3e42]">
                       {tag}
                     </span>
                   ))}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 ml-4">
                 <Button
                   variant="outline"
                   size="sm"
@@ -350,54 +390,54 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
   const renderSettingsTab = () => (
     <div className="space-y-6">
       <Card className="p-4">
-        <h3 className="font-semibold mb-4">Generator Settings</h3>
+        <h3 className="font-semibold mb-4 text-[#cccccc]">Generator Settings</h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Auto Apply Changes</label>
+            <label className="text-sm font-medium text-[#cccccc]">Auto Apply Changes</label>
             <input
               type="checkbox"
               checked={state.settings.autoApply}
               onChange={(e) => handleSettingsUpdate('autoApply', e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-[#007acc] bg-[#3c3c3c] border border-[#3e3e42] rounded"
             />
           </div>
           
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Preview Mode</label>
+            <label className="text-sm font-medium text-[#cccccc]">Preview Mode</label>
             <input
               type="checkbox"
               checked={state.settings.previewMode}
               onChange={(e) => handleSettingsUpdate('previewMode', e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-[#007acc] bg-[#3c3c3c] border border-[#3e3e42] rounded"
             />
           </div>
           
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Persist Settings</label>
+            <label className="text-sm font-medium text-[#cccccc]">Persist Settings</label>
             <input
               type="checkbox"
               checked={state.settings.persistSettings}
               onChange={(e) => handleSettingsUpdate('persistSettings', e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-[#007acc] bg-[#3c3c3c] border border-[#3e3e42] rounded"
             />
           </div>
           
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">AI Suggestions</label>
+            <label className="text-sm font-medium text-[#cccccc]">AI Suggestions</label>
             <input
               type="checkbox"
               checked={state.settings.aiSuggestions}
               onChange={(e) => handleSettingsUpdate('aiSuggestions', e.target.checked)}
-              className="w-4 h-4"
+              className="w-4 h-4 accent-[#007acc] bg-[#3c3c3c] border border-[#3e3e42] rounded"
             />
           </div>
           
           <div>
-            <label className="text-sm font-medium block mb-2">Randomization Level</label>
+            <label className="text-sm font-medium block mb-2 text-[#cccccc]">Randomization Level</label>
             <select
               value={state.settings.randomizationLevel}
               onChange={(e) => handleSettingsUpdate('randomizationLevel', e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 bg-[#3c3c3c] border border-[#3e3e42] rounded text-[#cccccc] focus:outline-none focus:ring-1 focus:ring-[#007acc] focus:border-[#007acc]"
             >
               <option value="conservative">Conservative</option>
               <option value="moderate">Moderate</option>
@@ -409,54 +449,147 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
     </div>
   );
 
+  const renderHistoryTab = () => (
+    <div className="space-y-6">
+      {state.history.length === 0 ? (
+        <div className="text-center py-12">
+          <Clock className="w-16 h-16 text-[#858585] mx-auto mb-4" />
+          <p className="text-[#cccccc] text-lg mb-2">No theme history yet</p>
+          <p className="text-sm text-[#858585]">Generate or apply themes to build your history</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-[#cccccc]">Theme History ({state.history.length})</h3>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+            {state.history.slice().reverse().map((item, index) => (
+              <Card key={item.timestamp} className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1">
+                        <div 
+                          className="w-4 h-4 rounded-full border border-[#3e3e42]"
+                          style={{ backgroundColor: item.theme.colors.primary }}
+                        />
+                        <div 
+                          className="w-4 h-4 rounded-full border border-[#3e3e42]"
+                          style={{ backgroundColor: item.theme.colors.surface }}
+                        />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm text-[#cccccc]">{item.theme.name}</p>
+                        <p className="text-xs text-[#858585]">
+                          {item.layout.name} • {new Date(item.timestamp).toLocaleTimeString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setTheme(item.theme);
+                      setLayout(item.layout);
+                    }}
+                    className="flex items-center gap-1"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Restore
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Theme & Layout Generator">
-      <div className="h-96 flex flex-col">
+    <Modal isOpen={isOpen} onClose={onClose} title="Theme & Layout Generator" size="fullscreen">
+      <div className="h-full flex flex-col bg-[#1e1e1e]">
         {/* Tab Navigation */}
-        <div className="flex border-b mb-4">
+        <div className="flex border-b border-[#3e3e42] bg-[#2d2d30] flex-shrink-0">
           <button
             onClick={() => setActiveTab('themes')}
-            className={`px-4 py-2 font-medium ${activeTab === 'themes' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+            className={`px-4 py-3 font-medium text-sm flex items-center gap-2 transition-colors ${
+              activeTab === 'themes' 
+                ? 'border-b-2 border-[#007acc] text-[#007acc] bg-[#1e1e1e]' 
+                : 'text-[#cccccc] hover:text-white hover:bg-[#37373d]'
+            }`}
           >
-            <Palette className="w-4 h-4 inline mr-2" />
+            <Palette className="w-4 h-4" />
             Themes
           </button>
           <button
             onClick={() => setActiveTab('layouts')}
-            className={`px-4 py-2 font-medium ${activeTab === 'layouts' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+            className={`px-4 py-3 font-medium text-sm flex items-center gap-2 transition-colors ${
+              activeTab === 'layouts' 
+                ? 'border-b-2 border-[#007acc] text-[#007acc] bg-[#1e1e1e]' 
+                : 'text-[#cccccc] hover:text-white hover:bg-[#37373d]'
+            }`}
           >
-            <Layout className="w-4 h-4 inline mr-2" />
+            <Layout className="w-4 h-4" />
             Layouts
           </button>
           <button
             onClick={() => setActiveTab('presets')}
-            className={`px-4 py-2 font-medium ${activeTab === 'presets' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+            className={`px-4 py-3 font-medium text-sm flex items-center gap-2 transition-colors ${
+              activeTab === 'presets' 
+                ? 'border-b-2 border-[#007acc] text-[#007acc] bg-[#1e1e1e]' 
+                : 'text-[#cccccc] hover:text-white hover:bg-[#37373d]'
+            }`}
           >
-            <Sparkles className="w-4 h-4 inline mr-2" />
+            <Sparkles className="w-4 h-4" />
             Presets
           </button>
           <button
-            onClick={() => setActiveTab('settings')}
-            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
+            onClick={() => setActiveTab('history')}
+            className={`px-4 py-3 font-medium text-sm flex items-center gap-2 transition-colors ${
+              activeTab === 'history' 
+                ? 'border-b-2 border-[#007acc] text-[#007acc] bg-[#1e1e1e]' 
+                : 'text-[#cccccc] hover:text-white hover:bg-[#37373d]'
+            }`}
           >
-            <Settings className="w-4 h-4 inline mr-2" />
+            <History className="w-4 h-4" />
+            History
+            {state.history.length > 0 && (
+              <span className="ml-1 bg-[#007acc] text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
+                {state.history.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`px-4 py-3 font-medium text-sm flex items-center gap-2 transition-colors ${
+              activeTab === 'settings' 
+                ? 'border-b-2 border-[#007acc] text-[#007acc] bg-[#1e1e1e]' 
+                : 'text-[#cccccc] hover:text-white hover:bg-[#37373d]'
+            }`}
+          >
+            <Settings className="w-4 h-4" />
             Settings
           </button>
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto">
-          {activeTab === 'themes' && renderThemesTab()}
-          {activeTab === 'layouts' && renderLayoutsTab()}
-          {activeTab === 'presets' && renderPresetsTab()}
-          {activeTab === 'settings' && renderSettingsTab()}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full overflow-y-auto custom-scrollbar">
+            <div className="p-6">
+              {activeTab === 'themes' && renderThemesTab()}
+              {activeTab === 'layouts' && renderLayoutsTab()}
+              {activeTab === 'presets' && renderPresetsTab()}
+              {activeTab === 'history' && renderHistoryTab()}
+              {activeTab === 'settings' && renderSettingsTab()}
+            </div>
+          </div>
         </div>
 
         {/* Preview Controls */}
         {(state.previewTheme || state.previewLayout) && (
-          <div className="border-t pt-4 mt-4">
+          <div className="border-t border-[#3e3e42] bg-[#2d2d30] p-4 flex-shrink-0">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-[#cccccc]">
                 {state.previewTheme && state.previewLayout 
                   ? 'Previewing theme and layout changes'
                   : state.previewTheme 
@@ -468,7 +601,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
                   variant="outline"
                   size="sm"
                   onClick={cancelPreview}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-transparent border-[#3e3e42] text-[#cccccc] hover:bg-[#37373d] hover:border-[#007acc]"
                 >
                   <EyeOff className="w-4 h-4" />
                   Cancel
@@ -476,7 +609,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
                 <Button
                   size="sm"
                   onClick={applyPreview}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-[#007acc] hover:bg-[#1177bb] text-white"
                 >
                   <Eye className="w-4 h-4" />
                   Apply

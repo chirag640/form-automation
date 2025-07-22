@@ -388,9 +388,9 @@ import { useForm } from 'react-hook-form';`;
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">${formConfig.title || 'Dynamic Form'}</h1>
-      ${formConfig.description ? `<p className="text-gray-600 mb-6">${formConfig.description}</p>` : ''}
+    <div className="max-w-2xl mx-auto p-6 bg-gray-900 text-white min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-white">${formConfig.title || 'Dynamic Form'}</h1>
+      ${formConfig.description ? `<p className="text-gray-300 mb-6">${formConfig.description}</p>` : ''}
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         ${formFields}
@@ -408,8 +408,8 @@ import { useForm } from 'react-hook-form';`;
   }
 
   private static generateReactField(field: FieldConfig): string {
-    const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
-    const inputClass = 'w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
+    const labelClass = 'block text-sm font-medium text-gray-300 mb-2';
+    const inputClass = 'w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white placeholder-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500';
     const errorClass = 'mt-1 text-sm text-red-600';
 
     switch (field.type) {
@@ -459,9 +459,9 @@ import { useForm } from 'react-hook-form';`;
             <input
               type="checkbox"
               {...register('${field.key}', { required: ${field.required} })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-blue-600 border-gray-600 bg-gray-800 rounded focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700">${field.label || field.key}</span>
+            <span className="text-sm text-gray-300">${field.label || field.key}</span>
           </label>
           {errors.${field.key} && <p className="${errorClass}">This field is required</p>}
         </div>`;
@@ -515,9 +515,9 @@ export const formConfig = ${JSON.stringify(formConfig, null, 2)};`;
 
   static generateVueCode(formConfig: FormConfig): string {
     return `<template>
-  <div class="max-w-2xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-4">${formConfig.title || 'Dynamic Form'}</h1>
-    ${formConfig.description ? `<p class="text-gray-600 mb-6">${formConfig.description}</p>` : ''}
+  <div class="max-w-2xl mx-auto p-6 bg-gray-900 text-white min-h-screen">
+    <h1 class="text-2xl font-bold mb-4 text-white">${formConfig.title || 'Dynamic Form'}</h1>
+    ${formConfig.description ? `<p class="text-gray-300 mb-6">${formConfig.description}</p>` : ''}
     
     <form @submit.prevent="onSubmit" class="space-y-6">
       <!-- Form fields would be generated here -->

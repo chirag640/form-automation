@@ -99,7 +99,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
       case 'multiline':
         return (
           <div key={field.key} className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
@@ -108,8 +108,8 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
               placeholder={field.placeholder}
               rows={4}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                error ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 bg-gray-800 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                error ? 'border-red-500' : 'border-gray-600'
               }`}
             />
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -122,15 +122,15 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
       case 'dropdown':
         return (
           <div key={field.key} className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <select
               value={value}
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                error ? 'border-red-500' : 'border-gray-300'
+              className={`w-full px-3 py-2 bg-gray-800 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                error ? 'border-red-500' : 'border-gray-600'
               }`}
             >
               <option value="">{field.placeholder || 'Select an option'}</option>
@@ -150,7 +150,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
       case 'radio':
         return (
           <div key={field.key} className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
@@ -163,9 +163,9 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
                     value={option}
                     checked={value === option}
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    className="w-4 h-4 text-blue-600 border-gray-600 bg-gray-800 focus:ring-blue-500"
                   />
-                  <span className="text-sm text-gray-700">{option}</span>
+                  <span className="text-sm text-gray-300">{option}</span>
                 </label>
               ))}
             </div>
