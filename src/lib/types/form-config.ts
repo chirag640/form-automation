@@ -22,9 +22,9 @@ export interface FieldConfig {
   required: boolean;
   placeholder?: string;
   helperText?: string;
-  extra: Record<string, any>;
+  extra: Record<string, unknown>;
   validation?: ValidationRule[];
-  visibleIf?: Record<string, any>;
+  visibleIf?: Record<string, unknown>;
 }
 
 export type FieldType = 
@@ -46,7 +46,7 @@ export type FieldType =
 
 export interface ValidationRule {
   type: 'required' | 'minLength' | 'maxLength' | 'pattern' | 'min' | 'max' | 'custom';
-  value?: any;
+  value?: unknown;
   message: string;
 }
 
@@ -70,7 +70,7 @@ export interface FormTheme {
 }
 
 export interface FormData {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface FormErrors {

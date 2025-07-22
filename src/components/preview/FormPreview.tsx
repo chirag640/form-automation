@@ -13,7 +13,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
   const [formData, setFormData] = useState<FormData>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleFieldChange = (key: string, value: any) => {
+  const handleFieldChange = (key: string, value: unknown) => {
     setFormData(prev => ({
       ...prev,
       [key]: value
@@ -69,14 +69,34 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
   };
 
   const renderField = (field: FieldConfig) => {
-    const value = formData[field.key] || '';
+    let value = formData[field.key];
+    // Ensure value is compatible with InputProps
+    if (field.type === 'number') {
+      value = typeof value === 'number' ? value : '';
+    } else if (field.type === 'text' || field.type === 'email' || field.type === 'password' || field.type === 'phone') {
+      value = typeof value === 'string' ? value : '';
+    } else if (field.type === 'multiline') {
+      value = typeof value === 'string' ? value : '';
+    } else if (field.type === 'dropdown' || field.type === 'radio') {
+      value = typeof value === 'string' ? value : '';
+    } else if (field.type === 'multi_select') {
+      value = Array.isArray(value) ? value : [];
+    } else if (field.type === 'date') {
+      value = typeof value === 'string' ? value : '';
+    } else if (field.type === 'slider' || field.type === 'rating') {
+      value = typeof value === 'number' ? value : 0;
+    } else if (field.type === 'color') {
+      value = typeof value === 'string' ? value : '#000000';
+    } else if (field.type === 'file') {
+      value = typeof value === 'string' ? value : '';
+    }
     const error = errors[field.key];
 
     const commonProps = {
       key: field.key,
       label: field.label,
       value,
-      onChange: (e: any) => handleFieldChange(field.key, e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => handleFieldChange(field.key, e.target.value),
       error,
       required: field.required,
       placeholder: field.placeholder
@@ -91,6 +111,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
         return (
           <Input
             {...commonProps}
+            value={value as string | number | undefined}
             type={field.type === 'number' ? 'number' : field.type}
             helperText={field.helperText}
           />
@@ -104,7 +125,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <textarea
-              value={value}
+              value={typeof value === 'string' ? value : ''}
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
               placeholder={field.placeholder}
               rows={4}
@@ -127,14 +148,14 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <select
-              value={value}
+              value={value as string}
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
               className={`w-full px-3 py-2 bg-gray-800 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 error ? 'border-red-500' : 'border-gray-600'
               }`}
             >
               <option value="">{field.placeholder || 'Select an option'}</option>
-              {(field.extra.options || []).map((option: string) => (
+              {(Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : []).map((option: string) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -155,7 +176,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <div className="space-y-2">
-              {(field.extra.options || []).map((option: string) => (
+              {(Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : []).map((option: string) => (
                 <label key={option} className="flex items-center space-x-2">
                   <input
                     type="radio"
@@ -206,24 +227,27 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
             <div className="space-y-2">
-              {(field.extra.options || []).map((option: string) => (
-                <label key={option} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={(value || []).includes(option)}
-                    onChange={(e) => {
-                      const currentValues = value || [];
-                      if (e.target.checked) {
-                        handleFieldChange(field.key, [...currentValues, option]);
-                      } else {
-                        handleFieldChange(field.key, currentValues.filter((v: string) => v !== option));
-                      }
-                    }}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <span className="text-sm text-gray-700">{option}</span>
-                </label>
-              ))}
+              {(Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : []).map((option: string) => {
+                const checked = Array.isArray(value) ? value.includes(option) : false;
+                return (
+                  <label key={option} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        const currentValues = Array.isArray(value) ? value : [];
+                        if (e.target.checked) {
+                          handleFieldChange(field.key, [...currentValues, option]);
+                        } else {
+                          handleFieldChange(field.key, currentValues.filter((v: string) => v !== option));
+                        }
+                      }}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">{option}</span>
+                  </label>
+                );
+              })}
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             {field.helperText && !error && (
@@ -236,12 +260,17 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
         return (
           <Input
             {...commonProps}
+            value={typeof value === 'string' ? value : ''}
             type="date"
             helperText={field.helperText}
           />
         );
 
       case 'slider':
+        const min = typeof field.extra.min === 'number' ? field.extra.min : 0;
+        const max = typeof field.extra.max === 'number' ? field.extra.max : 100;
+        const step = typeof field.extra.step === 'number' ? field.extra.step : 1;
+        const sliderValue = typeof value === 'number' ? value : min;
         return (
           <div key={field.key} className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">
@@ -251,17 +280,17 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
             <div className="space-y-2">
               <input
                 type="range"
-                min={field.extra.min || 0}
-                max={field.extra.max || 100}
-                step={field.extra.step || 1}
-                value={value || field.extra.min || 0}
+                min={min}
+                max={max}
+                step={step}
+                value={sliderValue}
                 onChange={(e) => handleFieldChange(field.key, Number(e.target.value))}
                 className="w-full"
               />
               <div className="flex justify-between text-sm text-gray-600">
-                <span>{field.extra.min || 0}</span>
-                <span className="font-medium">{value || field.extra.min || 0}</span>
-                <span>{field.extra.max || 100}</span>
+                <span>{min}</span>
+                <span className="font-medium">{sliderValue}</span>
+                <span>{max}</span>
               </div>
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
@@ -272,7 +301,8 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
         );
 
       case 'rating':
-        const maxRating = field.extra.maxRating || 5;
+        const maxRating = typeof field.extra.maxRating === 'number' ? field.extra.maxRating : 5;
+        const ratingValue = typeof value === 'number' ? value : 0;
         return (
           <div key={field.key} className="space-y-1">
             <label className="block text-sm font-medium text-gray-700">
@@ -286,7 +316,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
                   type="button"
                   onClick={() => handleFieldChange(field.key, index + 1)}
                   className={`w-8 h-8 ${
-                    index < (value || 0) ? 'text-yellow-400' : 'text-gray-300'
+                    index < ratingValue ? 'text-yellow-400' : 'text-gray-300'
                   } hover:text-yellow-400 transition-colors`}
                 >
                   ⭐
@@ -309,7 +339,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
             </label>
             <input
               type="color"
-              value={value || '#000000'}
+              value={typeof value === 'string' ? value : '#000000'}
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
               className="w-16 h-10 border border-gray-300 rounded cursor-pointer"
             />
@@ -343,6 +373,7 @@ export const FormPreview = ({ config }: FormPreviewProps) => {
         return (
           <Input
             {...commonProps}
+            value={typeof value === 'string' ? value : ''}
             helperText={field.helperText}
           />
         );

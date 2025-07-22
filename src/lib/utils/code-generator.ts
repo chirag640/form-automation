@@ -1,4 +1,4 @@
-import { FormConfig, FieldConfig, SectionConfig } from '@/lib/types/form-config';
+import { FormConfig, FieldConfig } from '@/lib/types/form-config';
 
 export class CodeGenerator {
   static generateFlutterCode(formConfig: FormConfig): string {
@@ -212,9 +212,9 @@ class _${className}State extends State<${className}> {
                         Text('${formConfig.description ?? 'Dynamic form built with JSON configuration'}',
                           style: const TextStyle(color: Colors.white)),
                         const SizedBox(height: 12),
-                        Text('📊 Total Fields: \${${this.getTotalFieldsCount(formConfig)}}',
+                        Text('📊 Total Fields: \${${this.getTotalFieldsCount()}}',
                           style: const TextStyle(color: Colors.grey)),
-                        Text('📋 Sections: \${${this.getSectionsCount(formConfig)}}',
+                        Text('📋 Sections: \${${this.getSectionsCount()}}',
                           style: const TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -348,11 +348,11 @@ class _${className}State extends State<${className}> {
 }`;
   }
 
-  private static getTotalFieldsCount(formConfig: FormConfig): string {
+  private static getTotalFieldsCount(): string {
     return `formConfig['sections'].fold(0, (count, section) => count + (section['fields']?.length ?? 0))`;
   }
 
-  private static getSectionsCount(formConfig: FormConfig): string {
+  private static getSectionsCount(): string {
     return `formConfig['sections'].where((section) => section['fields'] != null).length`;
   }
 
@@ -440,7 +440,7 @@ import { useForm } from 'react-hook-form';`;
         </div>`;
 
       case 'dropdown':
-        const options = field.extra.options || [];
+        const options = Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : [];
         return `<div>
           <label className="${labelClass}">${field.label || field.key}</label>
           <select
@@ -596,7 +596,7 @@ const onSubmit = () => {
         </div>`;
 
       case 'dropdown':
-        const options = field.extra.options || [];
+        const options = Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : [];
         return `<div class="form-group">
           <label for="${field.key}">${field.label || field.key}</label>
           <select id="${field.key}" name="${field.key}" ${required}>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FormConfig, FieldConfig, SectionConfig } from '@/lib/types/form-config';
 import { SortableField } from './SortableField';
@@ -39,7 +38,7 @@ export const FormCanvas = ({
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { over } = event;
     
     if (!over) return;
     
@@ -49,11 +48,10 @@ export const FormCanvas = ({
     setActiveId(null);
   };
 
-  const renderSection = (section: SectionConfig, index: number) => (
+  const renderSection = (section: SectionConfig) => (
     <SortableSection
       key={section.id}
       section={section}
-      index={index}
       onSelect={() => onFieldSelect(section.id)}
       isSelected={selectedFieldId === section.id}
       onUpdateSection={(updates) => {
@@ -75,27 +73,12 @@ export const FormCanvas = ({
       }}
     >
       <div className="space-y-3">
-        {section.fields.map((field, fieldIndex) => (
+        {section.fields.map((field) => (
           <SortableField
             key={field.key}
             field={field}
-            index={fieldIndex}
             onSelect={() => onFieldSelect(field.key)}
             isSelected={selectedFieldId === field.key}
-            onUpdateField={(updates) => {
-              const newConfig = { ...config };
-              const sectionIndex = newConfig.sections.findIndex(s => 
-                'id' in s && s.id === section.id
-              );
-              if (sectionIndex !== -1) {
-                const sectionConfig = newConfig.sections[sectionIndex] as SectionConfig;
-                const fieldIndex = sectionConfig.fields.findIndex(f => f.key === field.key);
-                if (fieldIndex !== -1) {
-                  sectionConfig.fields[fieldIndex] = { ...field, ...updates };
-                  onConfigChange(newConfig);
-                }
-              }
-            }}
             onRemoveField={() => {
               const newConfig = { ...config };
               const sectionIndex = newConfig.sections.findIndex(s => 
@@ -113,23 +96,12 @@ export const FormCanvas = ({
     </SortableSection>
   );
 
-  const renderField = (field: FieldConfig, index: number) => (
+  const renderField = (field: FieldConfig) => (
     <SortableField
       key={field.key}
       field={field}
-      index={index}
       onSelect={() => onFieldSelect(field.key)}
       isSelected={selectedFieldId === field.key}
-      onUpdateField={(updates) => {
-        const newConfig = { ...config };
-        const fieldIndex = newConfig.sections.findIndex(s => 
-          !('fields' in s) && (s as FieldConfig).key === field.key
-        );
-        if (fieldIndex !== -1) {
-          newConfig.sections[fieldIndex] = { ...field, ...updates };
-          onConfigChange(newConfig);
-        }
-      }}
       onRemoveField={() => {
         const newConfig = { ...config };
         newConfig.sections = newConfig.sections.filter(s => 
@@ -242,11 +214,11 @@ export const FormCanvas = ({
                     gap: layout.fieldLayout.groupSpacing
                   }}
                 >
-                  {config.sections.map((section, index) => {
+                  {config.sections.map((section) => {
                     if ('fields' in section) {
-                      return renderSection(section as SectionConfig, index);
+                      return renderSection(section as SectionConfig);
                     } else {
-                      return renderField(section as FieldConfig, index);
+                      return renderField(section as FieldConfig);
                     }
                   })}
                 </div>

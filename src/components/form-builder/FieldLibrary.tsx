@@ -15,7 +15,6 @@ import {
   Palette, 
   Upload 
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { FieldType } from '@/lib/types/form-config';
 
 interface FieldLibraryProps {

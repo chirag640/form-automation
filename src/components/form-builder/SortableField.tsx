@@ -7,19 +7,16 @@ import { GripVertical, Trash2, Copy, Settings } from 'lucide-react';
 
 interface SortableFieldProps {
   field: FieldConfig;
-  index: number;
   onSelect: () => void;
   isSelected: boolean;
-  onUpdateField: (updates: Partial<FieldConfig>) => void;
+  // onUpdateField removed (was unused)
   onRemoveField: () => void;
 }
 
 export const SortableField = ({
   field,
-  index,
   onSelect,
   isSelected,
-  onUpdateField,
   onRemoveField
 }: SortableFieldProps) => {
   const {

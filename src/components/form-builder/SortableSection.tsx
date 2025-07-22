@@ -8,7 +8,6 @@ import { GripVertical, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SortableSectionProps {
   section: SectionConfig;
-  index: number;
   children: ReactNode;
   onSelect: () => void;
   isSelected: boolean;
@@ -18,7 +17,6 @@ interface SortableSectionProps {
 
 export const SortableSection = ({
   section,
-  index,
   children,
   onSelect,
   isSelected,

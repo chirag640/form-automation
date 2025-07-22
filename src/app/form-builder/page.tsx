@@ -12,9 +12,8 @@ import { ThemeGenerator } from '@/components/theme-generator/ThemeGenerator';
 import { FormDebugger } from '@/lib/utils/form-debugger';
 import { problematicForms, loadTestForm, generateComprehensiveTestForm } from '@/lib/utils/test-forms';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { FieldType } from '@/lib/types/form-config';
-import { Code, Save, Settings, Palette, Bug } from 'lucide-react';
+import { Code, Settings, Palette, Bug } from 'lucide-react';
 
 export default function FormBuilderPage() {
   const {
@@ -47,7 +46,7 @@ export default function FormBuilderPage() {
     }
   };
 
-  const handleFormSettingsUpdate = (key: string, value: any) => {
+  const handleFormSettingsUpdate = (key: string, value: unknown) => {
     setFormConfig({
       ...formConfig,
       [key]: value
@@ -265,7 +264,7 @@ export default function FormBuilderPage() {
             </div>
             <div className="mt-4 pt-4 border-t border-gray-600">
               <p className="text-sm text-gray-400">
-                💡 Load a test form, then click "Debug Form" to see detailed analysis in the console.
+                💡 Load a test form, then click &ldquo;Debug Form&rdquo; to see detailed analysis in the console.
               </p>
             </div>
           </div>

@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { ThemePreset, GeneratorSettings } from '@/lib/types/theme-config';
-import { generateRandomTheme as utilGenerateRandomTheme, generateRandomLayout as utilGenerateRandomLayout } from '@/lib/utils/theme-defaults';
+import { GeneratorSettings } from '@/lib/types/theme-config';
 import { 
   Palette, 
   Layout, 
@@ -18,7 +17,6 @@ import {
   EyeOff, 
   RefreshCw,
   Download,
-  Upload,
   History,
   Sparkles,
   Clock
@@ -52,7 +50,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
   const [activeTab, setActiveTab] = useState<'themes' | 'layouts' | 'presets' | 'history' | 'settings'>('themes');
   const [customThemeName, setCustomThemeName] = useState('');
   const [customLayoutName, setCustomLayoutName] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating] = useState(false);
 
   const handleGenerateRandomTheme = () => {
     generateRandomTheme();
@@ -97,7 +95,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
     }
   };
 
-  const handleSettingsUpdate = (key: keyof GeneratorSettings, value: any) => {
+  const handleSettingsUpdate = (key: keyof GeneratorSettings, value: unknown) => {
     updateSettings({ [key]: value });
   };
 
@@ -461,7 +459,7 @@ export const ThemeGenerator: React.FC<ThemeGeneratorProps> = ({ isOpen, onClose 
         <div className="space-y-4">
           <h3 className="font-semibold text-[#cccccc]">Theme History ({state.history.length})</h3>
           <div className="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
-            {state.history.slice().reverse().map((item, index) => (
+            {state.history.slice().reverse().map((item) => (
               <Card key={item.timestamp} className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">

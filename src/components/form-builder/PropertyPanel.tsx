@@ -24,11 +24,11 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
     );
   }
 
-  const handleBasicUpdate = (key: keyof FieldConfig, value: any) => {
+  const handleBasicUpdate = (key: keyof FieldConfig, value: unknown) => {
     onUpdateField({ [key]: value });
   };
 
-  const handleExtraUpdate = (key: string, value: any) => {
+  const handleExtraUpdate = (key: string, value: unknown) => {
     onUpdateField({
       extra: {
         ...field.extra,
@@ -40,14 +40,20 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
   const addOption = () => {
     if (!newOption.trim()) return;
     
-    const currentOptions = field.extra.options || [];
+    let currentOptions: string[] = [];
+    if (Array.isArray(field.extra.options)) {
+      currentOptions = field.extra.options.filter(opt => typeof opt === 'string');
+    }
     handleExtraUpdate('options', [...currentOptions, newOption.trim()]);
     setNewOption('');
   };
 
   const removeOption = (index: number) => {
-    const currentOptions = field.extra.options || [];
-    handleExtraUpdate('options', currentOptions.filter((_: any, i: number) => i !== index));
+    let currentOptions: string[] = [];
+    if (Array.isArray(field.extra.options)) {
+      currentOptions = field.extra.options.filter(opt => typeof opt === 'string');
+    }
+    handleExtraUpdate('options', currentOptions.filter((_, i) => i !== index));
   };
 
   const addValidationRule = () => {
@@ -140,12 +146,15 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                {(field.extra.options || []).map((option: string, index: number) => (
+                {(Array.isArray(field.extra.options) ? field.extra.options.filter(opt => typeof opt === 'string') : []).map((option: string, index: number) => (
                   <div key={index} className="flex items-center space-x-2">
                     <Input
                       value={option}
                       onChange={(e) => {
-                        const newOptions = [...(field.extra.options || [])];
+                        let newOptions: string[] = [];
+                        if (Array.isArray(field.extra.options)) {
+                          newOptions = field.extra.options.filter(opt => typeof opt === 'string');
+                        }
                         newOptions[index] = e.target.value;
                         handleExtraUpdate('options', newOptions);
                       }}
@@ -189,7 +198,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Minimum Value"
                 type="number"
-                value={field.extra.min || ''}
+                value={typeof field.extra.min === 'number' ? field.extra.min : ''}
                 onChange={(e) => handleExtraUpdate('min', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="Minimum value"
               />
@@ -197,7 +206,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Maximum Value"
                 type="number"
-                value={field.extra.max || ''}
+                value={typeof field.extra.max === 'number' ? field.extra.max : ''}
                 onChange={(e) => handleExtraUpdate('max', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="Maximum value"
               />
@@ -205,7 +214,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Step"
                 type="number"
-                value={field.extra.step || ''}
+                value={typeof field.extra.step === 'number' ? field.extra.step : ''}
                 onChange={(e) => handleExtraUpdate('step', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="Step value"
               />
@@ -223,7 +232,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Min Length"
                 type="number"
-                value={field.extra.minLength || ''}
+                value={typeof field.extra.minLength === 'number' ? field.extra.minLength : ''}
                 onChange={(e) => handleExtraUpdate('minLength', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="Minimum length"
               />
@@ -231,14 +240,14 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Max Length"
                 type="number"
-                value={field.extra.maxLength || ''}
+                value={typeof field.extra.maxLength === 'number' ? field.extra.maxLength : ''}
                 onChange={(e) => handleExtraUpdate('maxLength', e.target.value ? Number(e.target.value) : undefined)}
                 placeholder="Maximum length"
               />
               
               <Input
                 label="Pattern (RegEx)"
-                value={field.extra.pattern || ''}
+                value={typeof field.extra.pattern === 'string' ? field.extra.pattern : ''}
                 onChange={(e) => handleExtraUpdate('pattern', e.target.value)}
                 placeholder="Regular expression pattern"
               />
@@ -256,28 +265,28 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Minimum Value"
                 type="number"
-                value={field.extra.min || 0}
+                value={typeof field.extra.min === 'number' ? field.extra.min : 0}
                 onChange={(e) => handleExtraUpdate('min', Number(e.target.value))}
               />
               
               <Input
                 label="Maximum Value"
                 type="number"
-                value={field.extra.max || 100}
+                value={typeof field.extra.max === 'number' ? field.extra.max : 100}
                 onChange={(e) => handleExtraUpdate('max', Number(e.target.value))}
               />
               
               <Input
                 label="Step"
                 type="number"
-                value={field.extra.step || 1}
+                value={typeof field.extra.step === 'number' ? field.extra.step : 1}
                 onChange={(e) => handleExtraUpdate('step', Number(e.target.value))}
               />
               
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={field.extra.showLabels || false}
+                  checked={typeof field.extra.showLabels === 'boolean' ? field.extra.showLabels : false}
                   onChange={(e) => handleExtraUpdate('showLabels', e.target.checked)}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -297,14 +306,14 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
               <Input
                 label="Max Rating"
                 type="number"
-                value={field.extra.maxRating || 5}
+                value={typeof field.extra.maxRating === 'number' ? field.extra.maxRating : 5}
                 onChange={(e) => handleExtraUpdate('maxRating', Number(e.target.value))}
               />
               
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
-                  checked={field.extra.allowHalfRating || false}
+                  checked={typeof field.extra.allowHalfRating === 'boolean' ? field.extra.allowHalfRating : false}
                   onChange={(e) => handleExtraUpdate('allowHalfRating', e.target.checked)}
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -330,7 +339,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
                 <div className="flex items-center justify-between">
                   <select
                     value={rule.type}
-                    onChange={(e) => updateValidationRule(index, { type: e.target.value as any })}
+                    onChange={(e) => updateValidationRule(index, { type: e.target.value as ValidationRule['type'] })}
                     className="px-2 py-1 border border-gray-300 rounded text-sm"
                   >
                     <option value="required">Required</option>
@@ -353,7 +362,7 @@ export const PropertyPanel = ({ field, onUpdateField }: PropertyPanelProps) => {
                 {rule.type !== 'required' && (
                   <Input
                     label="Value"
-                    value={rule.value || ''}
+                    value={typeof rule.value === 'string' || typeof rule.value === 'number' ? rule.value : ''}
                     onChange={(e) => updateValidationRule(index, { value: e.target.value })}
                     placeholder="Validation value"
                   />

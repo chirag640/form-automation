@@ -29,7 +29,7 @@ export const useFormBuilder = (options: UseFormBuilderOptions = {}) => {
   const addField = useCallback((fieldType: string, sectionId?: string) => {
     const newField: FieldConfig = {
       key: `field_${Date.now()}`,
-      type: fieldType as any,
+      type: fieldType as FieldConfig['type'],
       label: `New ${fieldType} Field`,
       required: false,
       extra: {}
@@ -167,7 +167,7 @@ export const useFormBuilder = (options: UseFormBuilderOptions = {}) => {
     return isValid;
   }, [formConfig, formData]);
 
-  const updateFormData = useCallback((fieldKey: string, value: any) => {
+  const updateFormData = useCallback((fieldKey: string, value: unknown) => {
     setFormData(prev => ({
       ...prev,
       [fieldKey]: value

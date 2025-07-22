@@ -82,47 +82,76 @@ export const useThemeCSS = () => {
   }, [getCurrentTheme, getCurrentLayout]);
 };
 
-export const getThemeStyles = (theme: any, layout: any) => {
+export const getThemeStyles = (theme: unknown, layout: unknown) => {
+  const themeObj = theme as { 
+    colors: { 
+      primary: string; 
+      secondary: string; 
+      background: string; 
+      surface: string; 
+      text?: { primary?: string; secondary?: string; muted?: string }; 
+      border: string; 
+      error: string; 
+      success: string; 
+      warning: string; 
+      info: string; 
+    };
+    typography?: {
+      fontFamily?: string;
+      headings?: { fontSize?: string; fontWeight?: string; letterSpacing?: string };
+      body?: { fontSize?: string; fontWeight?: string; lineHeight?: string };
+      input?: { fontSize?: string; fontWeight?: string };
+    };
+    spacing?: { xs?: string; sm?: string; md?: string; lg?: string; xl?: string };
+    borderRadius?: { sm?: string; md?: string; lg?: string; full?: string };
+    shadows?: { sm?: string; md?: string; lg?: string; xl?: string };
+  };
+  
+  const layoutObj = layout as {
+    formLayout?: { maxWidth?: string; padding?: string; spacing?: string };
+    fieldLayout?: { fieldSpacing?: string; groupSpacing?: string; sectionSpacing?: string };
+  };
+  
   return {
-    '--theme-primary': theme.colors.primary,
-    '--theme-secondary': theme.colors.secondary,
-    '--theme-background': theme.colors.background,
-    '--theme-surface': theme.colors.surface,
-    '--theme-text-primary': theme.colors.text.primary,
-    '--theme-text-secondary': theme.colors.text.secondary,
-    '--theme-text-muted': theme.colors.text.muted,
-    '--theme-border': theme.colors.border,
-    '--theme-error': theme.colors.error,
-    '--theme-success': theme.colors.success,
-    '--theme-warning': theme.colors.warning,
-    '--theme-info': theme.colors.info,
-    '--theme-font-family': theme.typography.fontFamily,
-    '--theme-heading-font-size': theme.typography.headings.fontSize,
-    '--theme-heading-font-weight': theme.typography.headings.fontWeight,
-    '--theme-heading-letter-spacing': theme.typography.headings.letterSpacing,
-    '--theme-body-font-size': theme.typography.body.fontSize,
-    '--theme-body-font-weight': theme.typography.body.fontWeight,
-    '--theme-body-line-height': theme.typography.body.lineHeight,
-    '--theme-input-font-size': theme.typography.input.fontSize,
-    '--theme-input-font-weight': theme.typography.input.fontWeight,
-    '--theme-spacing-xs': theme.spacing.xs,
-    '--theme-spacing-sm': theme.spacing.sm,
-    '--theme-spacing-md': theme.spacing.md,
-    '--theme-spacing-lg': theme.spacing.lg,
-    '--theme-spacing-xl': theme.spacing.xl,
-    '--theme-radius-sm': theme.borderRadius.sm,
-    '--theme-radius-md': theme.borderRadius.md,
-    '--theme-radius-lg': theme.borderRadius.lg,
-    '--theme-radius-full': theme.borderRadius.full,
-    '--theme-shadow-sm': theme.shadows.sm,
-    '--theme-shadow-md': theme.shadows.md,
-    '--theme-shadow-lg': theme.shadows.lg,
-    '--theme-shadow-xl': theme.shadows.xl,
-    '--layout-max-width': layout.formLayout.maxWidth,
-    '--layout-padding': layout.formLayout.padding,
-    '--layout-spacing': layout.formLayout.spacing,
-    '--layout-field-spacing': layout.fieldLayout.fieldSpacing,
-    '--layout-group-spacing': layout.fieldLayout.groupSpacing,
-    '--layout-section-spacing': layout.fieldLayout.sectionSpacing,
+    '--theme-primary': themeObj.colors.primary,
+    '--theme-secondary': themeObj.colors.secondary,
+    '--theme-background': themeObj.colors.background,
+    '--theme-surface': themeObj.colors.surface,
+    '--theme-text-primary': themeObj.colors.text?.primary,
+    '--theme-text-secondary': themeObj.colors.text?.secondary,
+    '--theme-text-muted': themeObj.colors.text?.muted,
+    '--theme-border': themeObj.colors.border,
+    '--theme-error': themeObj.colors.error,
+    '--theme-success': themeObj.colors.success,
+    '--theme-warning': themeObj.colors.warning,
+    '--theme-info': themeObj.colors.info,
+    '--theme-font-family': themeObj.typography?.fontFamily,
+    '--theme-heading-font-size': themeObj.typography?.headings?.fontSize,
+    '--theme-heading-font-weight': themeObj.typography?.headings?.fontWeight,
+    '--theme-heading-letter-spacing': themeObj.typography?.headings?.letterSpacing,
+    '--theme-body-font-size': themeObj.typography?.body?.fontSize,
+    '--theme-body-font-weight': themeObj.typography?.body?.fontWeight,
+    '--theme-body-line-height': themeObj.typography?.body?.lineHeight,
+    '--theme-input-font-size': themeObj.typography?.input?.fontSize,
+    '--theme-input-font-weight': themeObj.typography?.input?.fontWeight,
+    '--theme-spacing-xs': themeObj.spacing?.xs,
+    '--theme-spacing-sm': themeObj.spacing?.sm,
+    '--theme-spacing-md': themeObj.spacing?.md,
+    '--theme-spacing-lg': themeObj.spacing?.lg,
+    '--theme-spacing-xl': themeObj.spacing?.xl,
+    '--theme-radius-sm': themeObj.borderRadius?.sm,
+    '--theme-radius-md': themeObj.borderRadius?.md,
+    '--theme-radius-lg': themeObj.borderRadius?.lg,
+    '--theme-radius-full': themeObj.borderRadius?.full,
+    '--theme-shadow-sm': themeObj.shadows?.sm,
+    '--theme-shadow-md': themeObj.shadows?.md,
+    '--theme-shadow-lg': themeObj.shadows?.lg,
+    '--theme-shadow-xl': themeObj.shadows?.xl,
+    '--layout-max-width': layoutObj.formLayout?.maxWidth,
+    '--layout-padding': layoutObj.formLayout?.padding,
+    '--layout-spacing': layoutObj.formLayout?.spacing,
+    '--layout-field-spacing': layoutObj.fieldLayout?.fieldSpacing,
+    '--layout-group-spacing': layoutObj.fieldLayout?.groupSpacing,
+    '--layout-section-spacing': layoutObj.fieldLayout?.sectionSpacing,
   } as React.CSSProperties;
 };

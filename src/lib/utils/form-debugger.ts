@@ -12,7 +12,7 @@ export class FormDebugger {
     this.validateDropdownFields(formConfig, issues, warnings);
     
     // Check for field type consistency
-    this.validateFieldTypes(formConfig, issues, warnings);
+    this.validateFieldTypes(formConfig, issues);
     
     // Check for missing required properties
     this.validateRequiredProperties(formConfig, issues, warnings);
@@ -30,8 +30,11 @@ export class FormDebugger {
     
     allFields.forEach(field => {
       if (field.type === 'dropdown' || field.type === 'radio' || field.type === 'multi_select') {
-        const options = field.extra.options || [];
-        
+        let options: string[] = [];
+        if (Array.isArray(field.extra.options)) {
+          options = field.extra.options.filter(opt => typeof opt === 'string');
+        }
+
         if (options.length === 0) {
           issues.push({
             type: 'missing_options',
@@ -40,7 +43,7 @@ export class FormDebugger {
             message: `${field.type} field "${field.key}" has no options defined`
           });
         }
-        
+
         if (options.length < 2) {
           warnings.push({
             type: 'insufficient_options',
@@ -62,7 +65,7 @@ export class FormDebugger {
         }
 
         // Check for empty options
-        const emptyOptions = options.filter((opt: string) => !opt.trim());
+        const emptyOptions = options.filter(opt => typeof opt === 'string' && !opt.trim());
         if (emptyOptions.length > 0) {
           issues.push({
             type: 'empty_options',
@@ -75,7 +78,7 @@ export class FormDebugger {
     });
   }
 
-  private static validateFieldTypes(formConfig: FormConfig, issues: Issue[], warnings: Warning[]) {
+  private static validateFieldTypes(formConfig: FormConfig, issues: Issue[]) {
     const allFields = this.extractAllFields(formConfig);
     const validTypes = [
       'text', 'email', 'password', 'number', 'phone', 'multiline',
@@ -154,8 +157,11 @@ export class FormDebugger {
       dropdownFieldCount: dropdownFields.length,
       radioFieldCount: radioFields.length,
       fieldsWithOptions: optionFields.length,
-      averageOptionsPerField: optionFields.length > 0 
-        ? optionFields.reduce((sum, field) => sum + (field.extra.options?.length || 0), 0) / optionFields.length 
+      averageOptionsPerField: optionFields.length > 0
+        ? optionFields.reduce((sum, field) => {
+            const opts = field.extra.options;
+            return sum + (Array.isArray(opts) ? opts.length : 0);
+          }, 0) / optionFields.length
         : 0
     };
   }
@@ -194,10 +200,14 @@ export class FormDebugger {
     if (optionFields.length > 0) {
       console.group('📋 Fields with Options:');
       optionFields.forEach(field => {
+        let options: string[] = [];
+        if (Array.isArray(field.extra.options)) {
+          options = field.extra.options.filter(opt => typeof opt === 'string');
+        }
         console.log(`${field.type} "${field.key}":`, {
           label: field.label,
-          options: field.extra.options || [],
-          optionCount: (field.extra.options || []).length
+          options,
+          optionCount: options.length
         });
       });
       console.groupEnd();
@@ -220,12 +230,12 @@ export class FormDebugger {
         if (!field.extra.options) {
           field.extra.options = [];
         }
-        
-        // Remove empty options
-        field.extra.options = field.extra.options.filter((opt: string) => opt && opt.trim());
-        
-        // Remove duplicates
-        field.extra.options = [...new Set(field.extra.options)];
+        if (Array.isArray(field.extra.options)) {
+          // Remove empty options
+          field.extra.options = field.extra.options.filter(opt => typeof opt === 'string' && opt.trim());
+          // Remove duplicates
+          field.extra.options = [...new Set(field.extra.options as string[])];
+        }
       }
       
       // Ensure required properties

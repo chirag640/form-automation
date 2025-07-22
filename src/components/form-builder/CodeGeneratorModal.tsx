@@ -178,7 +178,7 @@ interface CodeEditorProps {
   readonly?: boolean;
 }
 
-const CodeEditor = ({ value, language, readonly = false }: CodeEditorProps) => {
+const CodeEditor = ({ value }: CodeEditorProps) => {
   return (
     <div className="h-full w-full">
       <pre className="h-full w-full p-4 bg-gray-900 text-gray-100 overflow-auto text-sm font-mono">
